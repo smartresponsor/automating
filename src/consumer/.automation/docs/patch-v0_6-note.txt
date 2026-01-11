@@ -1,0 +1,5 @@
+patch v0_6
+- consumer engine: .automate/tool/automater-pack-sync.ps1
+- multipack config: .automate/packs.json
+- workflows use GitHub App installation token (Automater) for checkout + push
+- vars/secrets documented in .automate/docs/org-setup.md

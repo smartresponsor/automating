@@ -1,5 +1,5 @@
 # Copyright (c) 2025 Oleksandr Tishchenko / Marketing America Corp
-name: sr-agent-dispatch
+name: agent-dispatch
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         description: "Agent task"
         required: true
         type: choice
-        options: [scan, health, doctor, validate, plan, codex, pr]
+        options: [ scan, health, doctor, validate, plan, codex, pr ]
       kind:
         description: "Kind (fix/feature/etc)"
         required: false
@@ -67,4 +67,4 @@ jobs:
       - name: Run agent task
         shell: pwsh
         run: |
-          ./Domain/Tool/automate-task.ps1 -Task "${{ inputs.task }}" -Kind "${{ inputs.kind }}" -Message "${{ inputs.message }}" -Note "${{ inputs.note }}"
+          ./Domain/Tool/sr-agent-task.ps1 -Task "${{ inputs.task }}" -Kind "${{ inputs.kind }}" -Message "${{ inputs.message }}" -Note "${{ inputs.note }}"

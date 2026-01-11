@@ -1,0 +1,40 @@
+name: automate-pack-sync
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "17 * * * *"
+  repository_dispatch:
+    types: [automate-pack-release, automate-kit-release]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: automate-pack-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup git safe directory
+        shell: bash
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Sync packs (direct push)
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTOMATE_SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
+          AUTOMATE_PUSH_TIMER: ${{ vars.AUTOMATE_PUSH_TIMER }}
+          AUTOMATE_BASE_BRANCH: ${{ vars.AUTOMATE_BASE_BRANCH }}
+          AUTOMATE_TRIGGER_PACK_ID: ${{ github.event.client_payload.packId || '' }}
+          AUTOMATE_TRIGGER_TAG: ${{ github.event.client_payload.tag || '' }}
+        run: |
+          pwsh -File ./.automate/tool/automate-pack-sync.ps1

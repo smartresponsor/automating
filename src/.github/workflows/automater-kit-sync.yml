@@ -1,0 +1,42 @@
+name: automater-kit-sync
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "17 */6 * * *"
+  repository_dispatch:
+    types: [automater-kit-release]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: automater-kit-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup git safe directory
+        shell: bash
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Sync Automater Kit
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTOMATER_SOURCE_TOKEN: ${{ secrets.AUTOMATER_SOURCE_TOKEN }}
+          AUTOMATER_KIT_OWNER: ${{ vars.AUTOMATER_KIT_OWNER }}
+          AUTOMATER_KIT_REPO: ${{ vars.AUTOMATER_KIT_REPO }}
+          AUTOMATER_BASE_BRANCH: ${{ vars.AUTOMATER_BASE_BRANCH }}
+          AUTOMATER_KIT_BRANCH_PREFIX: ${{ vars.AUTOMATER_KIT_BRANCH_PREFIX }}
+          AUTOMATER_KIT_LOCK_PATH: ${{ vars.AUTOMATER_KIT_LOCK_PATH }}
+        run: |
+          ./Domain/Tool/automater-kit-sync.ps1

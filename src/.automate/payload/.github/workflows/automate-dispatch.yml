@@ -1,5 +1,5 @@
 # Copyright (c) 2025 Oleksandr Tishchenko / Marketing America Corp
-name: sr-agent-dispatch
+name: automate-dispatch
 
 on:
   workflow_dispatch:
@@ -29,7 +29,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: sr-agent-dispatch-${{ github.ref }}
+  group: automate-dispatch-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -67,4 +67,4 @@ jobs:
       - name: Run agent task
         shell: pwsh
         run: |
-          ./Domain/Tool/automate-task.ps1 -Task "${{ inputs.task }}" -Kind "${{ inputs.kind }}" -Message "${{ inputs.message }}" -Note "${{ inputs.note }}"
+          ./.automate/tool/automate-task.ps1 -Task "${{ inputs.task }}" -Kind "${{ inputs.kind }}" -Message "${{ inputs.message }}" -Note "${{ inputs.note }}"

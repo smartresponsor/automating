@@ -1,0 +1,1 @@
+Moved to .automate/docs (single-folder kit).
