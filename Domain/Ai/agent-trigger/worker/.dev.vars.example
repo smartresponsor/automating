@@ -1,0 +1,12 @@
+# DO NOT COMMIT THIS FILE.
+# Copy to .dev.vars for wrangler dev.
+
+# Worker secrets/vars:
+SR_TRIGGER_SECRET_K1=CHANGE_ME
+
+# Optional:
+# SR_TRIGGER_SECRET_K2=CHANGE_ME
+# SR_TRIGGER_SECRET_K3=CHANGE_ME
+
+# GitHub token (fine-grained or classic) with workflow dispatch permissions:
+GH_TOKEN=CHANGE_ME
