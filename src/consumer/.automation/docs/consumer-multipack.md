@@ -1,12 +1,12 @@
 consumer model (multi-pack)
 
 what it does
-- engine reads .automate/packs.json and applies packs from source releases
+- engine reads .automating/packs.json and applies packs from source releases
 - each pack is downloaded as a release asset zip + sha256
 - sha256 is verified before apply
 - apply mode: copy-overwrite into targetRoot
-- backups (only overwritten files): .automate/backup/<packId>/<tag>/...
-- lock: .automate/lock/<packId>.json
+- backups (only overwritten files): .automating/backup/<packId>/<tag>/...
+- lock: .automating/lock/<packId>.json
 - throttle: ISO8601 duration via AUTOMATER_PUSH_TIMER (fallback AUTOMATE_PUSH_TIMER)
 
 required tools on runner

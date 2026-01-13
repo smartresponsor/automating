@@ -1,7 +1,0 @@
-This patch adds multi-pack consumer engine.
-
-- config: .automate/packs.json
-- engine: .automate/tool/automate-pack-sync.ps1
-- workflow: .github/workflows/automate-pack-sync.yml
-
-Default pack id: automate-kit (source: taa0662621456/Automating).

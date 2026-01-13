@@ -455,9 +455,9 @@ phpcs.xml
 # Android studio 3.1+ serialized cache file
 
 # AutomateKit (industrial)
-.automate/lock/
-.automate/backup/
-.automate/tmp/
+.automating/lock/
+.automating/backup/
+.automating/tmp/
 
 # Cloudflare Wrangler
 **/.wrangler/

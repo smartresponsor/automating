@@ -23,17 +23,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build kit zip from .automate
+      - name: Build kit zip from .automating
         shell: bash
         run: |
           set -euo pipefail
           rm -rf dist
           mkdir -p dist
-          if [ ! -d ".automate" ]; then
-            echo "Missing .automate directory."
+          if [ ! -d ".automating" ]; then
+            echo "Missing .automating directory."
             exit 1
           fi
-          (cd . && zip -r "dist/${ASSET_ZIP}" .automate >/dev/null)
+          (cd . && zip -r "dist/${ASSET_ZIP}" .automating >/dev/null)
           (cd dist && sha256sum "${ASSET_ZIP}" | awk '{print $1}' > "${ASSET_SHA}")
 
       - name: Create GitHub Release
@@ -58,15 +58,15 @@ jobs:
           GH_TOKEN: ${{ steps.app.outputs.token != '' && steps.app.outputs.token || secrets.AUTOMATE_DISPATCH_TOKEN }}
         run: |
           set -euo pipefail
-          if [ ! -f ".automate/client/allowlist.json" ]; then
-            echo "No .automate/client/allowlist.json; skip dispatch."
+          if [ ! -f ".automating/client/allowlist.json" ]; then
+            echo "No .automating/client/allowlist.json; skip dispatch."
             exit 0
           fi
 
-          event_type=$(jq -r '.event_type // "automate-kit-release"' .automate/client/allowlist.json)
-          topic=$(jq -r '.topic // ""' .automate/client/allowlist.json)
+          event_type=$(jq -r '.event_type // "automate-kit-release"' .automating/client/allowlist.json)
+          topic=$(jq -r '.topic // ""' .automating/client/allowlist.json)
 
-          repos=$(jq -r '.repos[]?' .automate/client/allowlist.json 2>/dev/null || true)
+          repos=$(jq -r '.repos[]?' .automating/client/allowlist.json 2>/dev/null || true)
 
           # Optional: discover by topic in the same owner/org
           if [ -n "$topic" ]; then
@@ -75,8 +75,8 @@ jobs:
             echo "Discover by topic: $q"
             discovered=$(gh api "search/repositories" -f q="$q" --jq '.items[].full_name' || true)
             repos=$(printf "%s
-%s
-" "$repos" "$discovered" | sed '/^$/d' | sort -u)
+          %s
+          " "$repos" "$discovered" | sed '/^$/d' | sort -u)
           fi
 
           if [ -z "$repos" ]; then

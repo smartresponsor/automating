@@ -25,7 +25,7 @@ jobs:
           node-version: "20"
 
       - name: Worker tests
-        working-directory: .automate/ai/agent-trigger/worker
+        working-directory: .automating/ai/agent-trigger/worker
         run: |
           node --version
           npm --version

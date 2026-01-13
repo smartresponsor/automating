@@ -67,4 +67,4 @@ jobs:
       - name: Run agent task
         shell: pwsh
         run: |
-          ./.automate/Tool/automate-task.ps1 -Task "${{ inputs.task }}" -Kind "${{ inputs.kind }}" -Message "${{ inputs.message }}" -Note "${{ inputs.note }}"
+          ./.automating/Tool/automate-task.ps1 -Task "${{ inputs.task }}" -Kind "${{ inputs.kind }}" -Message "${{ inputs.message }}" -Note "${{ inputs.note }}"

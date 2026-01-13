@@ -22,5 +22,5 @@ install app
 first run
 - Actions -> automate-pack-sync -> Run workflow
 expected
-- .automate/lock/<packId>.json created
+- .automating/lock/<packId>.json created
 - commit pushed to master by automater app token

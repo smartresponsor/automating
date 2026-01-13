@@ -3,10 +3,10 @@
 
 [CmdletBinding()]
 param(
-  [string]$PacksPath = ".automate/packs.json",
-  [string]$LockDir = ".automate/lock",
-  [string]$BackupDir = ".automate/backup",
-  [string]$WorkDir = ".automate/.tmp",
+  [string]$PacksPath = ".automating/packs.json",
+  [string]$LockDir = ".automating/lock",
+  [string]$BackupDir = ".automating/backup",
+  [string]$WorkDir = ".automating/.tmp",
   [string]$OnlyId = ""
 )
 
@@ -241,7 +241,7 @@ foreach ($pack in $packs) {
   CopyTree $payloadRoot $dstRoot.Path $id $tag
 
   $lockObj = [pscustomobject]@{
-    id = $id
+  id = $id
     source = "$owner/$repo"
     tag = $tag
     sha256 = $sha

@@ -16,4 +16,4 @@ Inputs:
 - Component/domain name: <DOMAIN>
 - Repo: <OWNER>/<REPO>
 - Target users / market: <TARGET>
-- Scope lock: see .automate/docs/component-scope.md
+- Scope lock: see .automating/docs/component-scope.md

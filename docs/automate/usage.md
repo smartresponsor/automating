@@ -1,7 +1,7 @@
 Компонент: Automating / AutomateKit (Industrial Canon)
 
 Куда кладём:
-- В каждом бизнес‑репозитории экосистемы SmartResponsor кит живёт в .automate/
+- В каждом бизнес‑репозитории экосистемы SmartResponsor кит живёт в .automating/
 - В коде используем идентификатор automator (классы/модули/слои), но публичные переменные/заголовки — AUTOMATE_ / X-AUTOMATE-*
 
 Цель:

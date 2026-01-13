@@ -1,1 +1,1 @@
-Moved to .automate/docs (single-folder kit).
+Moved to .automating/docs (single-folder kit).

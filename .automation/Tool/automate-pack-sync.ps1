@@ -71,12 +71,8 @@ function ParseIsoDurationSeconds([string]$Dur) {
 function NowUtc() { return [DateTimeOffset]::UtcNow }
 
 function ShouldThrottle([string]$PackId, [string]$TimerIso) {
-  $triggerTag = [string]$env:AUTOMATER_TRIGGER_TAG
-  if ([string]::IsNullOrWhiteSpace($triggerTag)) { $triggerTag = [string]$env:AUTOMATE_TRIGGER_TAG }
-
-  $triggerPack = [string]$env:AUTOMATER_TRIGGER_PACK_ID
-  if ([string]::IsNullOrWhiteSpace($triggerPack)) { $triggerPack = [string]$env:AUTOMATE_TRIGGER_PACK_ID }
-
+  $triggerTag = [string]$env:AUTOMATE_TRIGGER_TAG
+  $triggerPack = [string]$env:AUTOMATE_TRIGGER_PACK_ID
   if (-not [string]::IsNullOrWhiteSpace($triggerTag)) {
     if ([string]::IsNullOrWhiteSpace($triggerPack) -or $triggerPack -eq $PackId) { return $false }
   }
@@ -172,27 +168,17 @@ $packs = @($config.packs)
 
 if ($packs.Count -eq 0) { Write-Host "No packs configured."; exit 0 }
 
-$baseBranch = $env:AUTOMATER_BASE_BRANCH
-if ([string]::IsNullOrWhiteSpace($baseBranch)) { $baseBranch = $env:AUTOMATE_BASE_BRANCH }
-if ([string]::IsNullOrWhiteSpace($baseBranch)) {
-  if ($defaults.baseBranch) { $baseBranch = [string]$defaults.baseBranch } else { $baseBranch = "master" }
-}
+$baseBranch = $(if ($env:AUTOMATE_BASE_BRANCH) { [string]$env:AUTOMATE_BASE_BRANCH } elseif ($defaults.baseBranch) { [string]$defaults.baseBranch } else { "master" })
 
 $writeToken = [string]$env:GITHUB_TOKEN
 if ([string]::IsNullOrWhiteSpace($writeToken)) { throw "Missing GITHUB_TOKEN." }
 
-$readToken = [string]$env:AUTOMATE_SOURCE_TOKEN
-if ([string]::IsNullOrWhiteSpace($readToken)) { $readToken = [string]$env:AUTOMATER_SOURCE_TOKEN }
-if ([string]::IsNullOrWhiteSpace($readToken)) { $readToken = $writeToken }
+$readToken = $(if (-not [string]::IsNullOrWhiteSpace([string]$env:AUTOMATE_SOURCE_TOKEN)) { [string]$env:AUTOMATE_SOURCE_TOKEN } else { $writeToken })
 
 Git @("checkout",$baseBranch)
 Git @("pull","--ff-only","origin",$baseBranch)
 
-$globalTimer = $env:AUTOMATER_PUSH_TIMER
-if ([string]::IsNullOrWhiteSpace($globalTimer)) { $globalTimer = $env:AUTOMATE_PUSH_TIMER }
-if ([string]::IsNullOrWhiteSpace($globalTimer)) {
-  if ($defaults.pushTimer) { $globalTimer = [string]$defaults.pushTimer } else { $globalTimer = "PT6H" }
-}
+$globalTimer = $(if ($env:AUTOMATE_PUSH_TIMER) { [string]$env:AUTOMATE_PUSH_TIMER } elseif ($defaults.pushTimer) { [string]$defaults.pushTimer } else { "PT6H" })
 
 $applied = New-Object System.Collections.Generic.List[object]
 
@@ -216,11 +202,8 @@ foreach ($pack in $packs) {
     continue
   }
 
-  $triggerTag = [string]$env:AUTOMATER_TRIGGER_TAG
-  if ([string]::IsNullOrWhiteSpace($triggerTag)) { $triggerTag = [string]$env:AUTOMATE_TRIGGER_TAG }
-
-  $triggerPack = [string]$env:AUTOMATER_TRIGGER_PACK_ID
-  if ([string]::IsNullOrWhiteSpace($triggerPack)) { $triggerPack = [string]$env:AUTOMATE_TRIGGER_PACK_ID }
+  $triggerTag = [string]$env:AUTOMATE_TRIGGER_TAG
+  $triggerPack = [string]$env:AUTOMATE_TRIGGER_PACK_ID
 
   if (-not [string]::IsNullOrWhiteSpace($triggerTag) -and (-not [string]::IsNullOrWhiteSpace($triggerPack)) -and $triggerPack -ne $id) {
     continue
@@ -276,13 +259,13 @@ if ([string]::IsNullOrWhiteSpace($st)) {
   exit 0
 }
 
-Git @("config","user.name","automater-bot")
-Git @("config","user.email","automater-bot@users.noreply.github.com")
+Git @("config","user.name","automate-bot")
+Git @("config","user.email","automate-bot@users.noreply.github.com")
 
 $parts = @()
 foreach ($a in $applied) { $parts += ("{0}@{1}" -f $a.id, $a.tag) }
-$msg = "automater pack sync: " + ($parts -join "; ")
-if ($parts.Count -eq 0) { $msg = "automater pack sync" }
+$msg = "automate pack sync: " + ($parts -join "; ")
+if ($parts.Count -eq 0) { $msg = "automate pack sync" }
 
 Git @("add","-A")
 Git @("commit","-m",$msg)
