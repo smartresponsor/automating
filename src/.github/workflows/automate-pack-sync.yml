@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: "17 * * * *"
   repository_dispatch:
-    types: [automate-pack-release, automate-kit-release]
+    types: [automate-pack-release, automater-pack-release, automate-kit-release, automater-kit-release]
 
 permissions:
   contents: write
@@ -18,9 +18,17 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Create GitHub App token (Automater)
+        id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AUTOMATER_APP_ID }}
+          private-key: ${{ secrets.AUTOMATER_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ steps.app.outputs.token }}
 
       - name: Setup git safe directory
         shell: bash
@@ -30,11 +38,18 @@ jobs:
       - name: Sync packs (direct push)
         shell: pwsh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # consumer engine expects GITHUB_TOKEN for push auth (now app token)
+          GITHUB_TOKEN: ${{ steps.app.outputs.token }}
+
+          # read-only token for downloading source assets (if source is private)
           AUTOMATE_SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
-          AUTOMATE_PUSH_TIMER: ${{ vars.AUTOMATE_PUSH_TIMER }}
-          AUTOMATE_BASE_BRANCH: ${{ vars.AUTOMATE_BASE_BRANCH }}
-          AUTOMATE_TRIGGER_PACK_ID: ${{ github.event.client_payload.packId || '' }}
-          AUTOMATE_TRIGGER_TAG: ${{ github.event.client_payload.tag || '' }}
+
+          # throttling + base branch
+          AUTOMATER_PUSH_TIMER: ${{ vars.AUTOMATER_PUSH_TIMER }}
+          AUTOMATER_BASE_BRANCH: ${{ vars.AUTOMATER_BASE_BRANCH }}
+
+          # optional dispatch targeting
+          AUTOMATER_TRIGGER_PACK_ID: ${{ github.event.client_payload.packId || '' }}
+          AUTOMATER_TRIGGER_TAG: ${{ github.event.client_payload.tag || '' }}
         run: |
-          pwsh -File ./.automate/tool/automate-pack-sync.ps1
+          pwsh -File ./.automate/Tool/automater-pack-sync.ps1

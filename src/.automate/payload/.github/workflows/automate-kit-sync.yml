@@ -1,89 +1,10 @@
-# Copyright (c) 2025 Oleksandr Tishchenko / Marketing America Corp
-name: automate-kit-sync
+name: deprecated-workflow
 
 on:
-  workflow_dispatch:
-    inputs:
-      source_owner:
-        description: "Source owner"
-        required: true
-        default: "taa0662621456"
-        type: string
-      source_repo:
-        description: "Source repo"
-        required: true
-        default: "Automating"
-        type: string
-      release_tag:
-        description: "Release tag (or 'latest')"
-        required: true
-        default: "latest"
-        type: string
-      asset_name:
-        description: "Release asset name"
-        required: true
-        default: "automate-kit.zip"
-        type: string
-      strategy:
-        description: "Apply strategy"
-        required: true
-        default: "overwrite"
-        type: choice
-        options: [overwrite, skip]
-      dry_run:
-        description: "Dry run"
-        required: true
-        default: false
-        type: boolean
-
-permissions:
-  contents: write
-  pull-requests: write
-
-concurrency:
-  group: automate-kit-sync-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch: {}
 
 jobs:
-  sync:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup PowerShell
-        uses: PowerShell/PowerShell@v1
-        with:
-          pwsh-version: "7.4"
-
-      - name: Setup GH CLI
-        uses: cli/cli@v2
-
-      - name: Authenticate GH CLI
-        shell: bash
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-
-      - name: Sync kit from release
-        shell: pwsh
-        run: |
-          ./.automate/tool/automate-kit-sync.ps1 `
-            -SourceOwner "${{ inputs.source_owner }}" `
-            -SourceRepo "${{ inputs.source_repo }}" `
-            -ReleaseTag "${{ inputs.release_tag }}" `
-            -AssetName "${{ inputs.asset_name }}" `
-            -Strategy "${{ inputs.strategy }}" `
-            ${{ inputs.dry_run && '-DryRun' || '' }}
-
-      - name: Create PR (if changes)
-        shell: bash
-        run: |
-          if git diff --quiet; then
-            echo "No changes."
-            exit 0
-          fi
-          BR="automate-kit-sync/$(date -u +%Y%m%dT%H%M%SZ)"
-          git checkout -b "$BR"
-          git add -A
-          git commit -m "automate: sync kit from release"
-          git push -u origin "$BR"
-          gh pr create --title "automate: sync kit from release" --body "Automated kit sync." --base "${{ github.ref_name }}" --head "$BR"
+      - run: echo "This workflow is deprecated and intentionally disabled."
