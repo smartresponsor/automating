@@ -1,75 +1,18 @@
 name: automate-pack-sync
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
-    - cron: "17 * * * *"
-  repository_dispatch:
-    types: [automate-pack-release, automater-pack-release, automate-kit-release, automater-kit-release]
-
-permissions:
-  contents: write
-
-concurrency:
-  group: automate-pack-sync
-  cancel-in-progress: true
+    - cron: '0 * * * *'
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare GitHub App private key
-        id: key
-        shell: bash
-        env:
-          KEY_RAW: ${{ secrets.AUTOMATER_APP_PRIVATE_KEY }}
-          KEY_B64: ${{ secrets.AUTOMATER_APP_PRIVATE_KEY_B64 }}
-        run: |
-          set -euo pipefail
-
-          if [ -n "${KEY_RAW}" ]; then
-            # Expect PEM with real newlines (paste as-is from .pem file).
-            echo "private_key<<EOF" >> "$GITHUB_OUTPUT"
-            printf "%s\n" "${KEY_RAW}" >> "$GITHUB_OUTPUT"
-            echo "EOF" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [ -z "${KEY_B64}" ]; then
-            echo "Missing secrets: set AUTOMATER_APP_PRIVATE_KEY (PEM) or AUTOMATER_APP_PRIVATE_KEY_B64 (base64 PEM)" >&2
-            exit 1
-          fi
-
-          decoded="$(echo "${KEY_B64}" | base64 -d)"
-          echo "private_key<<EOF" >> "$GITHUB_OUTPUT"
-          printf "%s\n" "${decoded}" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub App token (Automater)
-        id: app
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.AUTOMATER_APP_ID }}
-          private-key: ${{ steps.key.outputs.private_key }}
-
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ steps.app.outputs.token }}
 
-      - name: Setup git safe directory
-        shell: bash
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-      - name: Sync packs (direct push)
+      - name: Automater pack sync
         shell: pwsh
-        env:
-          GITHUB_TOKEN: ${{ steps.app.outputs.token }}
-          AUTOMATE_SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
-          AUTOMATER_PUSH_TIMER: ${{ vars.AUTOMATER_PUSH_TIMER }}
-          AUTOMATER_BASE_BRANCH: ${{ vars.AUTOMATER_BASE_BRANCH }}
-          AUTOMATER_TRIGGER_PACK_ID: ${{ github.event.client_payload.packId || '' }}
-          AUTOMATER_TRIGGER_TAG: ${{ github.event.client_payload.tag || '' }}
         run: |
-          pwsh -File ./.automate/tool/automater-pack-sync.ps1
+          pwsh -File "$env:GITHUB_WORKSPACE/.automate/tool/automater-pack-sync.ps1" `
+            -OnlyId "automate-kit"
