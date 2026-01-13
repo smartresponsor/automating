@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  worker-test:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
           node-version: "20"
 
       - name: Worker tests
-        working-directory: Domain/Ai/agent-trigger/worker
+        working-directory: .automate/ai/agent-trigger/worker
         run: |
           node --version
           npm --version

@@ -12,8 +12,8 @@
     {
       "id": "automate-kit",
       "source": {
-        "owner": "taa0662621456",
-        "repo": "Automating"
+        "owner": "smartresponsor",
+        "repo": "automating"
       },
       "apply": {
         "targetRoot": "."
