@@ -45,11 +45,11 @@ jobs:
 
       - name: Create GitHub App token (optional)
         id: app
-        if: ${{ vars.AUT0MATER_APP_ID != '' && secrets.AUT0MATER_APP_PRIVATE_KEY != '' }}
+        if: ${{ vars.AUTOMATER_APP_ID != '' && secrets.AUTOMATER_APP_PRIVATE_KEY != '' }}
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ vars.AUT0MATER_APP_ID }}
-          private-key: ${{ secrets.AUT0MATER_APP_PRIVATE_KEY }}
+          app-id: ${{ vars.AUTOMATER_APP_ID }}
+          private-key: ${{ secrets.AUTOMATER_APP_PRIVATE_KEY }}
 
       - name: Dispatch to clients (optional)
         if: ${{ secrets.AUTOMATE_DISPATCH_TOKEN != '' || steps.app.outputs.token != '' }}

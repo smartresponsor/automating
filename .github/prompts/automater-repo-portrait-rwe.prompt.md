@@ -45,3 +45,4 @@ B) Leader benchmark list (RU) with 6–10 references, grouped by category
 C) Readiness scorecard (RU) with short justifications
 D) Gaps + opportunities (RU), grouped: product, commercial, docs, ops, security, automation
 E) Roadmap as RWE Envelopes (RU narrative, English Envelope fields)
+
