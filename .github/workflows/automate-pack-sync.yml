@@ -18,12 +18,39 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Prepare GitHub App private key
+        id: key
+        shell: bash
+        env:
+          KEY_RAW: ${{ secrets.AUTOMATER_APP_PRIVATE_KEY }}
+          KEY_B64: ${{ secrets.AUTOMATER_APP_PRIVATE_KEY_B64 }}
+        run: |
+          set -euo pipefail
+
+          if [ -n "${KEY_RAW}" ]; then
+            # Expect PEM with real newlines (paste as-is from .pem file).
+            echo "private_key<<EOF" >> "$GITHUB_OUTPUT"
+            printf "%s\n" "${KEY_RAW}" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ -z "${KEY_B64}" ]; then
+            echo "Missing secrets: set AUTOMATER_APP_PRIVATE_KEY (PEM) or AUTOMATER_APP_PRIVATE_KEY_B64 (base64 PEM)" >&2
+            exit 1
+          fi
+
+          decoded="$(echo "${KEY_B64}" | base64 -d)"
+          echo "private_key<<EOF" >> "$GITHUB_OUTPUT"
+          printf "%s\n" "${decoded}" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub App token (Automater)
         id: app
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.AUTOMATER_APP_ID }}
-          private-key: ${{ secrets.AUTOMATER_APP_PRIVATE_KEY }}
+          private-key: ${{ steps.key.outputs.private_key }}
 
       - uses: actions/checkout@v4
         with:
@@ -38,18 +65,11 @@ jobs:
       - name: Sync packs (direct push)
         shell: pwsh
         env:
-          # consumer engine expects GITHUB_TOKEN for push auth (now app token)
           GITHUB_TOKEN: ${{ steps.app.outputs.token }}
-
-          # read-only token for downloading source assets (if source is private)
           AUTOMATE_SOURCE_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
-
-          # throttling + base branch
           AUTOMATER_PUSH_TIMER: ${{ vars.AUTOMATER_PUSH_TIMER }}
           AUTOMATER_BASE_BRANCH: ${{ vars.AUTOMATER_BASE_BRANCH }}
-
-          # optional dispatch targeting
           AUTOMATER_TRIGGER_PACK_ID: ${{ github.event.client_payload.packId || '' }}
           AUTOMATER_TRIGGER_TAG: ${{ github.event.client_payload.tag || '' }}
         run: |
-          pwsh -File ./.automating/Tool/automater-pack-sync.ps1
+          pwsh -File ./.automate/tool/automater-pack-sync.ps1
