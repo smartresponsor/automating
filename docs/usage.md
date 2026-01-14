@@ -16,8 +16,8 @@ Rotation:
 
 GitHub Action:
 - .github/workflows/automater-dispatch.yml exposes workflow_dispatch inputs.task
-- Runner calls: Domain/Tool/automater-task.ps1
+- Runner calls: Domain/tool/automater-task.ps1
 
 Codex prompt helper:
-- Domain/Tool/automater-task.ps1 -Task codex
+- Domain/tool/automater-task.ps1 -Task codex
   ensures .github/prompts/automater-repo-portrait-rwe.prompt.md exists

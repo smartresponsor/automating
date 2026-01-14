@@ -10,7 +10,7 @@ Goal: prove signature verification + task allowlist without GitHub token.
 - AUTOMATER_TRIGGER_SECRET_K1 set in worker secrets
 
 3) Call from PowerShell:
-./Domain/Tool/automater-call.ps1 -Url "https://<worker>/dispatch" -Task health -Kid K1
+./Domain/tool/automater-call.ps1 -Url "https://<worker>/dispatch" -Task health -Kid K1
 
 Expected:
 - ok=true
