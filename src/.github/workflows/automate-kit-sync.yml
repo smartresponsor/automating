@@ -16,9 +16,6 @@ jobs:
         run: |
           $candidates = @(
             "$env:GITHUB_WORKSPACE/.automation/tool/automater-pack-sync.ps1",
-            "$env:GITHUB_WORKSPACE/.automate/tool/automater-pack-sync.ps1",
-            "$env:GITHUB_WORKSPACE/source/.automation/tool/automater-pack-sync.ps1",
-            "$env:GITHUB_WORKSPACE/source/.automate/tool/automater-pack-sync.ps1"
           )
           $found = $null
           foreach ($p in $candidates) {
