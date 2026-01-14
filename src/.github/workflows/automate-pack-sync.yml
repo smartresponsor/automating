@@ -14,5 +14,5 @@ jobs:
       - name: Automater pack sync
         shell: pwsh
         run: |
-          pwsh -File "$env:GITHUB_WORKSPACE/.automate/tool/automater-pack-sync.ps1" `
+          pwsh -File "$env:GITHUB_WORKSPACE/.automation/tool/automater-pack-sync.ps1" `
             -OnlyId "automate-kit"

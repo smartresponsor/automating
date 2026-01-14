@@ -52,4 +52,4 @@ jobs:
           AUTOMATER_TRIGGER_PACK_ID: ${{ github.event.client_payload.packId || '' }}
           AUTOMATER_TRIGGER_TAG: ${{ github.event.client_payload.tag || '' }}
         run: |
-          pwsh -File ./.automating/tool/automater-pack-sync.ps1
+          pwsh -File ./.automation/tool/automater-pack-sync.ps1

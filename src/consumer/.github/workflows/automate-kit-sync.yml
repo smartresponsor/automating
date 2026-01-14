@@ -45,4 +45,4 @@ jobs:
           AUTOMATER_TRIGGER_PACK_ID: "automate-kit"
           AUTOMATER_TRIGGER_TAG: ${{ github.event.client_payload.tag || '' }}
         run: |
-          pwsh -File ./.automating/tool/automater-pack-sync.ps1 -OnlyId "automate-kit"
+          pwsh -File ./.automation/tool/automater-pack-sync.ps1 -OnlyId "automate-kit"
