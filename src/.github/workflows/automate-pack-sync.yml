@@ -15,7 +15,7 @@ jobs:
         shell: pwsh
         run: |
           $candidates = @(
-            "$env:GITHUB_WORKSPACE/.automation/tool/automater-pack-sync.ps1",
+            "$env:GITHUB_WORKSPACE/.automation/tool/automater-pack-sync.ps1"
           )
           $found = $null
           foreach ($p in $candidates) {

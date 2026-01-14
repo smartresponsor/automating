@@ -241,7 +241,7 @@ foreach ($pack in $packs) {
   CopyTree $payloadRoot $dstRoot.Path $id $tag
 
   $lockObj = [pscustomobject]@{
-  id = $id
+    id = $id
     source = "$owner/$repo"
     tag = $tag
     sha256 = $sha

@@ -1,11 +1,11 @@
 name: automate-pack-sync
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: { }
   schedule:
     - cron: "17 * * * *"
   repository_dispatch:
-    types: [automate-pack-release, automater-pack-release, automate-kit-release, automater-kit-release]
+    types: [ automate-pack-release, automater-pack-release, automate-kit-release, automater-kit-release ]
 
 permissions:
   contents: write

@@ -1,5 +1,11 @@
 {
   "event_type": "automate-kit-release",
   "topic": "automate-client",
-  "repos": []
+  "repos": [
+    "automating",
+    "addressing",
+    "rolling",
+    "tagging",
+    "containerizing"
+  ]
 }

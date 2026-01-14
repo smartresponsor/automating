@@ -3,8 +3,8 @@
 [CmdletBinding()]
 param(
     [string]$RepoRoot = ".",
-    [string]$WorkerRelPath = ".automation/automator/agent-trigger/worker",
-    [string]$DefaultWorkflowFile = "automate-dispatch.yml"
+    [string]$WorkerRelPath = "Domain/Ai/agent-trigger/worker",
+    [string]$DefaultWorkflowFile = "automater-dispatch.yml"
 )
 
 Set-StrictMode -Version Latest
@@ -13,8 +13,8 @@ $ErrorActionPreference = "Stop"
 function Get-GitRemoteOriginUrl {
     param([Parameter(Mandatory = $true)][string]$WorkDir)
     try {
-        $p = Start-Process -FilePath "git" -ArgumentList @("-C",$WorkDir,"remote","get-url","origin") -NoNewWindow -PassThru -Wait -RedirectStandardOutput "$env:TEMP\sr_git_out.txt"
-        $url = (Get-Content "$env:TEMP\sr_git_out.txt" -ErrorAction SilentlyContinue | Select-Object -First 1)
+        $p = Start-Process -FilePath "git" -ArgumentList @("-C",$WorkDir,"remote","get-url","origin") -NoNewWindow -PassThru -Wait -RedirectStandardOutput "$env:TEMP\automater_git_out.txt"
+        $url = (Get-Content "$env:TEMP\automater_git_out.txt" -ErrorAction SilentlyContinue | Select-Object -First 1)
         if ($url) { return $url.Trim() }
     } catch {}
     return ""
@@ -46,7 +46,7 @@ if (-not $info.Owner -or -not $info.Repo) {
     $info = @{ Owner = "marketing-america-corp"; Repo = (Split-Path $root -Leaf) }
 }
 
-$workerName = ($info.Repo + "-agent-trigger").ToLowerInvariant()
+$workerName = ($info.Repo + "-automater-trigger").ToLowerInvariant()
 
 $toml = Get-Content $wranglerToml -Raw -Encoding UTF8
 $toml = $toml -replace '^(name\s*=\s*)".*"$', ('$1"' + $workerName + '"')

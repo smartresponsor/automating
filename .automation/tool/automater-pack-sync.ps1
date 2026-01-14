@@ -3,10 +3,10 @@
 
 [CmdletBinding()]
 param(
-  [string]$PacksPath = ".automating/packs.json",
-  [string]$LockDir = ".automating/lock",
-  [string]$BackupDir = ".automating/backup",
-  [string]$WorkDir = ".automating/.tmp",
+  [string]$PacksPath = ".automation/packs.json",
+  [string]$LockDir = ".automation/lock",
+  [string]$BackupDir = ".automation/backup",
+  [string]$WorkDir = ".automation/.tmp",
   [string]$OnlyId = ""
 )
 
@@ -91,7 +91,7 @@ function ShouldThrottle([string]$PackId, [string]$TimerIso) {
   $seconds = ParseIsoDurationSeconds $TimerIso
   if ($seconds -le 0) { return $false }
 
-  $age = (NowUtc() - $last).TotalSeconds
+  $age = ((NowUtc) - $last).TotalSeconds
   return ($age -lt $seconds)
 }
 
@@ -262,7 +262,7 @@ foreach ($pack in $packs) {
     source = "$owner/$repo"
     tag = $tag
     sha256 = $sha
-    appliedAt = (NowUtc().ToString("o"))
+    appliedAt = ((NowUtc).ToString("o"))
   }
   WriteJson $lockPath $lockObj
   $applied.Add(@{ id = $id; tag = $tag }) | Out-Null
