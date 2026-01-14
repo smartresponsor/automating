@@ -20,4 +20,4 @@ Write-Host ("GET " + $healthUrl)
 Invoke-RestMethod -Method Get -Uri $healthUrl -TimeoutSec 30 | ConvertTo-Json -Depth 8
 
 Write-Host ("POST " + $dispatchUrl + " task=health kid=" + $Kid)
-./Domain/Tool/automater-call.ps1 -Url $dispatchUrl -Task health -Kid $Kid -TimeoutSec 60 | ConvertTo-Json -Depth 8
+./Domain/tool/automater-call.ps1 -Url $dispatchUrl -Task health -Kid $Kid -TimeoutSec 60 | ConvertTo-Json -Depth 8

@@ -6,7 +6,7 @@ Component scope (lock):
 - target_usage:
   - embed as a patch into SmartResponsor component repos (Domain/Tool + Domain/Ai + workflow file)
   - call /dispatch from PowerShell (or any client) using HMAC signature + timestamp
-  - GitHub Actions executes Domain/Tool/automater-task.ps1 with inputs.task and optional metadata (kind/message/note)
+  - GitHub Actions executes Domain/tool/automater-task.ps1 with inputs.task and optional metadata (kind/message/note)
 - explicit_exclusions:
   - not a Symfony domain component; canon “mirror interfaces per layer” does NOT apply here
   - no long-running workflow engine, no queue, no scheduler
@@ -20,10 +20,10 @@ Key prefixes:
 
 What is included:
 - Domain/Ai/agent-trigger/worker (Cloudflare Worker): /health, /dispatch
-- Domain/Tool/automater-call.ps1: signs and sends /dispatch
-- Domain/Tool/automater-secret-set.ps1: helper to set AUTOMATER_TRIGGER_SECRET_K*
-- Domain/Tool/automater-worker-init.ps1: auto-fill wrangler.toml from git remote
-- Domain/Tool/automater-task.ps1: GitHub Actions task runner (scan/health/doctor/validate/plan/codex/pr)
+- Domain/tool/automater-call.ps1: signs and sends /dispatch
+- Domain/tool/automater-secret-set.ps1: helper to set AUTOMATER_TRIGGER_SECRET_K*
+- Domain/tool/automater-worker-init.ps1: auto-fill wrangler.toml from git remote
+- Domain/tool/automater-task.ps1: GitHub Actions task runner (scan/health/doctor/validate/plan/codex/pr)
 - .github/workflows/automater-dispatch.yml: workflow_dispatch entrypoint
 
 API summary:
@@ -43,7 +43,7 @@ K1 / K2 / K3 mechanism (recommended):
 
 Quick start (PowerShell client):
 1) Set secret (local session/user):
-   ./Domain/Tool/automater-secret-set.ps1 -Kid K1 -Secret "<random>" -Scope User
+   ./Domain/tool/automater-secret-set.ps1 -Kid K1 -Secret "<random>" -Scope User
 
 2) Deploy worker (Cloudflare):
    cd Domain/Ai/agent-trigger/worker
@@ -51,7 +51,7 @@ Quick start (PowerShell client):
    wrangler deploy
 
 3) Call:
-   ./Domain/Tool/automater-call.ps1 -Url "https://<your-worker>.workers.dev/dispatch" -Task health -Kid K1
+   ./Domain/tool/automater-call.ps1 -Url "https://<your-worker>.workers.dev/dispatch" -Task health -Kid K1
 
 Docs:
 - docs/component-scope.md
