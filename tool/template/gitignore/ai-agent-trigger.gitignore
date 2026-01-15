@@ -1,4 +1,0 @@
-# AI automation (agent-trigger)
-/Domain/Ai/agent-trigger/worker/node_modules/
-/Domain/Ai/agent-trigger/worker/.wrangler/
-/Domain/Ai/agent-trigger/worker/.dev.vars

@@ -2,9 +2,9 @@
 name: automater-ci
 
 on:
-  pull_request: {}
+  pull_request: { }
   push:
-    branches: [master]
+    branches: [ master ]
 
 permissions:
   contents: read

@@ -1,8 +1,0 @@
-{
-  "name": "automater-agent-trigger-worker",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "test": "node --test"
-  }
-}
