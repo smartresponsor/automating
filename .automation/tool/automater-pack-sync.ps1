@@ -11,6 +11,14 @@ param(
 )
 
 Set-StrictMode -Version Latest
+
+function Get-OptionalProp([object]$obj, [string]$name) {
+  if ($null -eq $obj) { return $null }
+  $p = $obj.PSObject.Properties[$name]
+  if ($null -ne $p) { return $p.Value }
+  return $null
+}
+
 $ErrorActionPreference = "Stop"
 
 function EnsureDir([string]$Path) {
@@ -223,7 +231,9 @@ foreach ($pack in $packs) {
   $repo  = [string]$pack.source.repo
   if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($repo)) { throw "Pack $id missing source owner/repo." }
 
-  $zipName = $(if ($pack.source.assetZip) { [string]$pack.source.assetZip } elseif ($defaults.assetZip) { [string]$defaults.assetZip } else { "automate-kit.zip" })
+  $zipName = [string](Get-OptionalProp $pack.source 'assetZip')
+  if (-not $zipName) { $zipName = [string](Get-OptionalProp $defaults 'assetZip') }
+  if (-not $zipName) { $zipName = "automate-kit.zip" }
   $shaName = $(if ($pack.source.assetSha) { [string]$pack.source.assetSha } elseif ($defaults.assetSha) { [string]$defaults.assetSha } else { "automate-kit.sha256" })
   $topFolder = $(if ($pack.source.topFolder) { [string]$pack.source.topFolder } elseif ($defaults.topFolder) { [string]$defaults.topFolder } else { "" })
   $targetRoot = $(if ($pack.apply.targetRoot) { [string]$pack.apply.targetRoot } elseif ($defaults.targetRoot) { [string]$defaults.targetRoot } else { "." })

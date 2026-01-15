@@ -7,7 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="restore: src" />
+    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="fix: git command as an application run">
+      <change beforePath="$PROJECT_DIR$/.automation/tool/automater-pack-sync.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/.automation/tool/automater-pack-sync.ps1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automater-pack-sync.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automater-pack-sync.ps1" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,15 +64,7 @@
       <option name="presentableId" value="Default" />
       <updated>1768173743048</updated>
       <workItem from="1768173744114" duration="40628000" />
-      <workItem from="1768449363731" duration="2266000" />
-    </task>
-    <task id="LOCAL-00001" summary="first commit">
-      <option name="closed" value="true" />
-      <created>1768173898433</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1768173898433</updated>
+      <workItem from="1768449363731" duration="3474000" />
     </task>
     <task id="LOCAL-00002" summary="first commit">
       <option name="closed" value="true" />
@@ -446,7 +442,23 @@
       <option name="project" value="LOCAL" />
       <updated>1768460239188</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="restore: git command as an application run">
+      <option name="closed" value="true" />
+      <created>1768461536374</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1768461536374</updated>
+    </task>
+    <task id="LOCAL-00050" summary="fix: git command as an application run">
+      <option name="closed" value="true" />
+      <created>1768461996452</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1768461996452</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -480,6 +492,8 @@
     <MESSAGE value="fix: git command" />
     <MESSAGE value="fix:" />
     <MESSAGE value="restore: src" />
-    <option name="LAST_COMMIT_MESSAGE" value="restore: src" />
+    <MESSAGE value="restore: git command as an application run" />
+    <MESSAGE value="fix: git command as an application run" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: git command as an application run" />
   </component>
 </project>
