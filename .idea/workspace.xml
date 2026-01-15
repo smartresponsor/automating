@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="restore: src" />
+    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="fix: a file path, secure reading args" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,23 +60,7 @@
       <option name="presentableId" value="Default" />
       <updated>1768173743048</updated>
       <workItem from="1768173744114" duration="40628000" />
-      <workItem from="1768449363731" duration="2266000" />
-    </task>
-    <task id="LOCAL-00001" summary="first commit">
-      <option name="closed" value="true" />
-      <created>1768173898433</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1768173898433</updated>
-    </task>
-    <task id="LOCAL-00002" summary="first commit">
-      <option name="closed" value="true" />
-      <created>1768179918628</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1768179918628</updated>
+      <workItem from="1768449363731" duration="3773000" />
     </task>
     <task id="LOCAL-00003" summary="first commit">
       <option name="closed" value="true" />
@@ -446,7 +430,31 @@
       <option name="project" value="LOCAL" />
       <updated>1768460239188</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="restore: git command as an application run">
+      <option name="closed" value="true" />
+      <created>1768461536374</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1768461536374</updated>
+    </task>
+    <task id="LOCAL-00050" summary="fix: git command as an application run">
+      <option name="closed" value="true" />
+      <created>1768461996452</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1768461996452</updated>
+    </task>
+    <task id="LOCAL-00051" summary="fix: a file path, secure reading args">
+      <option name="closed" value="true" />
+      <created>1768462651730</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1768462651731</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -480,6 +488,9 @@
     <MESSAGE value="fix: git command" />
     <MESSAGE value="fix:" />
     <MESSAGE value="restore: src" />
-    <option name="LAST_COMMIT_MESSAGE" value="restore: src" />
+    <MESSAGE value="restore: git command as an application run" />
+    <MESSAGE value="fix: git command as an application run" />
+    <MESSAGE value="fix: a file path, secure reading args" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: a file path, secure reading args" />
   </component>
 </project>

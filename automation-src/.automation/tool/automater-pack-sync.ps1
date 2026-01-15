@@ -11,6 +11,26 @@ param(
 )
 
 Set-StrictMode -Version Latest
+
+function Get-OptionalProp([object]$obj, [string]$name) {
+  if ($null -eq $obj) { return $null }
+
+  # Support both PSCustomObject and IDictionary/Hashtable
+  if ($obj -is [System.Collections.IDictionary]) {
+    try {
+      if ($obj.Contains($name)) { return $obj[$name] }
+    } catch {}
+    try {
+      if ($obj.ContainsKey($name)) { return $obj[$name] }
+    } catch {}
+    return $null
+  }
+
+  $p = $obj.PSObject.Properties[$name]
+  if ($null -ne $p) { return $p.Value }
+  return $null
+}
+
 $ErrorActionPreference = "Stop"
 
 function EnsureDir([string]$Path) {
@@ -193,7 +213,8 @@ if ($packs.Count -eq 0) { Write-Host "No packs configured."; exit 0 }
 $baseBranch = $env:AUTOMATER_BASE_BRANCH
 if ([string]::IsNullOrWhiteSpace($baseBranch)) { $baseBranch = $env:AUTOMATE_BASE_BRANCH }
 if ([string]::IsNullOrWhiteSpace($baseBranch)) {
-  if ($defaults.baseBranch) { $baseBranch = [string]$defaults.baseBranch } else { $baseBranch = "master" }
+  $defBranch = Get-OptionalProp $defaults 'baseBranch'
+  $baseBranch = $(if ($defBranch) { [string]$defBranch } else { "master" })
 }
 
 $writeToken = [string]$env:GITHUB_TOKEN
@@ -209,26 +230,44 @@ Git @("pull","--ff-only","origin",$baseBranch)
 $globalTimer = $env:AUTOMATER_PUSH_TIMER
 if ([string]::IsNullOrWhiteSpace($globalTimer)) { $globalTimer = $env:AUTOMATE_PUSH_TIMER }
 if ([string]::IsNullOrWhiteSpace($globalTimer)) {
-  if ($defaults.pushTimer) { $globalTimer = [string]$defaults.pushTimer } else { $globalTimer = "PT6H" }
+  $defTimer = Get-OptionalProp $defaults 'pushTimer'
+  $globalTimer = $(if ($defTimer) { [string]$defTimer } else { "PT6H" })
 }
 
 $applied = New-Object System.Collections.Generic.List[object]
 
 foreach ($pack in $packs) {
-  $id = [string]$pack.id
+  $id = [string](Get-OptionalProp $pack 'id')
   if ([string]::IsNullOrWhiteSpace($id)) { continue }
   if (-not [string]::IsNullOrWhiteSpace($OnlyId) -and $id -ne $OnlyId) { continue }
 
-  $owner = [string]$pack.source.owner
-  $repo  = [string]$pack.source.repo
+  $src = Get-OptionalProp $pack 'source'
+  $apply = Get-OptionalProp $pack 'apply'
+  $defSrc = Get-OptionalProp $defaults 'source'
+  $defApply = Get-OptionalProp $defaults 'apply'
+
+  $owner = [string](Get-OptionalProp $src 'owner')
+  $repo  = [string](Get-OptionalProp $src 'repo')
   if ([string]::IsNullOrWhiteSpace($owner) -or [string]::IsNullOrWhiteSpace($repo)) { throw "Pack $id missing source owner/repo." }
 
-  $zipName = $(if ($pack.source.assetZip) { [string]$pack.source.assetZip } elseif ($defaults.assetZip) { [string]$defaults.assetZip } else { "automate-kit.zip" })
-  $shaName = $(if ($pack.source.assetSha) { [string]$pack.source.assetSha } elseif ($defaults.assetSha) { [string]$defaults.assetSha } else { "automate-kit.sha256" })
-  $topFolder = $(if ($pack.source.topFolder) { [string]$pack.source.topFolder } elseif ($defaults.topFolder) { [string]$defaults.topFolder } else { "" })
-  $targetRoot = $(if ($pack.apply.targetRoot) { [string]$pack.apply.targetRoot } elseif ($defaults.targetRoot) { [string]$defaults.targetRoot } else { "." })
+  $zipName = [string](Get-OptionalProp $src 'assetZip')
+  if (-not $zipName) { $zipName = [string](Get-OptionalProp $defSrc 'assetZip') }
+  if (-not $zipName) { $zipName = "automate-kit.zip" }
 
-  $timer = $(if ($pack.apply.pushTimer) { [string]$pack.apply.pushTimer } else { $globalTimer })
+  $shaName = [string](Get-OptionalProp $src 'assetSha')
+  if (-not $shaName) { $shaName = [string](Get-OptionalProp $defSrc 'assetSha') }
+  if (-not $shaName) { $shaName = "automate-kit.sha256" }
+
+  $topFolder = [string](Get-OptionalProp $src 'topFolder')
+  if (-not $topFolder) { $topFolder = [string](Get-OptionalProp $defSrc 'topFolder') }
+  if ($null -eq $topFolder) { $topFolder = "" }
+
+  $targetRoot = [string](Get-OptionalProp $apply 'targetRoot')
+  if (-not $targetRoot) { $targetRoot = [string](Get-OptionalProp $defApply 'targetRoot') }
+  if (-not $targetRoot) { $targetRoot = "." }
+
+  $timer = [string](Get-OptionalProp $apply 'pushTimer')
+  if ([string]::IsNullOrWhiteSpace($timer)) { $timer = $globalTimer }
   if (ShouldThrottle $id $timer) {
     Write-Host "Throttle: skip $id (timer=$timer)"
     continue
