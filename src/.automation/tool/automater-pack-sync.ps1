@@ -34,9 +34,22 @@ function Sha256File([string]$Path) {
   return (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToLowerInvariant()
 }
 
-function Git([string[]]$Args) {
-  $p = Start-Process -FilePath git -ArgumentList $Args -NoNewWindow -Wait -PassThru
-  if ($p.ExitCode -ne 0) { throw "git failed: $($Args -join ' ')" }
+function Git {
+  param(
+    # Collect all positional arguments safely. Do not use $Args (reserved automatic variable).
+    [Parameter(ValueFromRemainingArguments = $true)]
+    [string[]]$GitArgs
+  )
+
+  if (-not $GitArgs -or $GitArgs.Count -eq 0) {
+    throw "git failed: <empty arguments>"
+  }
+
+  Write-Host ("git {0}" -f ($GitArgs -join ' '))
+  & git @GitArgs
+  if ($LASTEXITCODE -ne 0) {
+    throw "git failed: $($GitArgs -join ' ')"
+  }
 }
 
 function Gh([string[]]$Args) {
