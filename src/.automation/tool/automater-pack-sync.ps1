@@ -46,7 +46,12 @@ function Git {
   }
 
   Write-Host ("git {0}" -f ($GitArgs -join ' '))
-  & git @GitArgs
+
+  # PowerShell resolves commands case-insensitively.
+  # This file defines function `Git`, so calling `git` here would recurse and overflow call depth.
+  $gitExe = @((Get-Command git -All -CommandType Application -ErrorAction Stop).Path)[0]
+  if (-not $gitExe) { throw "git not found" }
+  & $gitExe @GitArgs
   if ($LASTEXITCODE -ne 0) {
     throw "git failed: $($GitArgs -join ' ')"
   }
