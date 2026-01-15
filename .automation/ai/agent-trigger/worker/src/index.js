@@ -170,7 +170,7 @@ async function handleAuthorized(env, payload) {
     const owner = envStr(env, 'GH_OWNER', '');
     const repo = envStr(env, 'GH_REPO', '');
     const workflow = envStr(env, 'GH_WORKFLOW', '');
-    const token = envStr(env, 'GITHUB_TOKEN', '');
+    const token = envStr(env, 'GH_TOKEN', '');
     const refDefault = envStr(env, 'GH_REF', 'master');
     const ghApiVersion = envStr(env, 'GH_API_VERSION', '2022-11-28');
 
@@ -186,9 +186,9 @@ async function handleAuthorized(env, payload) {
             ok: true,
             verified: true,
             dispatched: false,
-            reason: 'AUTOMATER_DEV_MODE=1 and GITHUB_TOKEN not set'
+            reason: 'AUTOMATER_DEV_MODE=1 and GH_TOKEN not set'
         });
-        return bad(500, 'Misconfig', 'GITHUB_TOKEN must be set');
+        return bad(500, 'Misconfig', 'GH_TOKEN must be set');
     }
 
     const inputs = (payload && typeof payload.inputs === 'object' && payload.inputs) ? payload.inputs : {};

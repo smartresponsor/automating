@@ -38,7 +38,7 @@ jobs:
       - name: Automater pack sync
         shell: pwsh
         env:
+          GITHUB_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
           AUTOMATER_SCRIPT: ${{ github.workspace }}/.automation/tool/automater-pack-sync.ps1
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           pwsh -NoProfile -File "$env:AUTOMATER_SCRIPT" -OnlyId "automate-kit"
