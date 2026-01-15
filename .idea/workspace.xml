@@ -7,7 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="fix: a file path, secure reading args" />
+    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="fix: a file path, secure reading args, restore /consumer-src/">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,23 +62,7 @@
       <option name="presentableId" value="Default" />
       <updated>1768173743048</updated>
       <workItem from="1768173744114" duration="40628000" />
-      <workItem from="1768449363731" duration="3773000" />
-    </task>
-    <task id="LOCAL-00003" summary="first commit">
-      <option name="closed" value="true" />
-      <created>1768180595878</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1768180595878</updated>
-    </task>
-    <task id="LOCAL-00004" summary="first commit">
-      <option name="closed" value="true" />
-      <created>1768181007633</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1768181007633</updated>
+      <workItem from="1768449363731" duration="4900000" />
     </task>
     <task id="LOCAL-00005" summary="first commit">
       <option name="closed" value="true" />
@@ -454,7 +440,23 @@
       <option name="project" value="LOCAL" />
       <updated>1768462651731</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="fix: a file path, secure reading args, restore /consumer-src/">
+      <option name="closed" value="true" />
+      <created>1768464282165</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1768464282165</updated>
+    </task>
+    <task id="LOCAL-00053" summary="fix: a file path, secure reading args, restore /consumer-src/">
+      <option name="closed" value="true" />
+      <created>1768464302526</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1768464302526</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -491,6 +493,8 @@
     <MESSAGE value="restore: git command as an application run" />
     <MESSAGE value="fix: git command as an application run" />
     <MESSAGE value="fix: a file path, secure reading args" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: a file path, secure reading args" />
+    <MESSAGE value="fix" />
+    <MESSAGE value="fix: a file path, secure reading args, restore /consumer-src/" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: a file path, secure reading args, restore /consumer-src/" />
   </component>
 </project>

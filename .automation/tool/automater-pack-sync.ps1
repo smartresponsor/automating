@@ -155,31 +155,64 @@ function CopyTree([string]$FromDir, [string]$ToDir, [string]$PackId, [string]$Ta
 }
 
 function GetLatestTag([string]$Owner, [string]$Repo, [string]$ReadToken) {
-  $tmp = Join-Path $WorkDir "release-latest.json"
-  WithGhToken $ReadToken {
-    Gh @("api","repos/$Owner/$Repo/releases/latest","--jq",".","-o",$tmp)
+  EnsureDir $WorkDir
+
+  $tag = $null
+  try {
+    WithGhToken $ReadToken {
+      $out = & gh api "repos/$Owner/$Repo/releases/latest" --jq ".tag_name" 2>&1
+      $ec = $LASTEXITCODE
+      if ($ec -ne 0) {
+        if ($out -match "404" -or $out -match "Not Found") { $tag = $null }
+        else { throw "gh failed: $out" }
+      } else {
+        $tag = [string]$out
+      }
+    }
+  } catch {
+    $msg = $_.Exception.Message
+    if ($msg -match "404" -or $msg -match "Not Found") { return $null }
+    throw
   }
-  $rel = Get-Content -LiteralPath $tmp -Raw -Encoding UTF8 | ConvertFrom-Json
-  $tag = [string]$rel.tag_name
-  if ([string]::IsNullOrWhiteSpace($tag)) { throw "No tag_name for $Owner/$Repo latest release." }
-  return $tag
+
+  if ([string]::IsNullOrWhiteSpace($tag)) { return $null }
+  return $tag.Trim()
 }
 
-function DownloadAssets([string]$Owner, [string]$Repo, [string]$Tag, [string]$ZipName, [string]$ShaName, [string]$ReadToken) {
+function DownloadAssets([string]$Owner, [string]$Repo, [string]$Tag, [string]$ZipName, [string]$ShaName, [string]$ReadToken, [string]$Branch) {
   EnsureDir $WorkDir
-  $dlDir = Join-Path $WorkDir ("dl-" + $Owner + "-" + $Repo + "-" + $Tag.Replace("/","_"))
+
+  $useBranch = if ([string]::IsNullOrWhiteSpace($Branch)) { "master" } else { $Branch }
+  $dlKey = if ([string]::IsNullOrWhiteSpace($Tag)) { ("branch-" + $useBranch) } else { $Tag.Replace("/","_") }
+
+  $dlDir = Join-Path $WorkDir ("dl-" + $Owner + "-" + $Repo + "-" + $dlKey)
   if (Test-Path -LiteralPath $dlDir) { Remove-Item -Recurse -Force -LiteralPath $dlDir }
   New-Item -ItemType Directory -Path $dlDir | Out-Null
 
-  WithGhToken $ReadToken {
-    Gh @("release","download",$Tag,"-R","$Owner/$Repo","-p",$ZipName,"-p",$ShaName,"-D",$dlDir)
+  # Preferred path: download release assets
+  if (-not [string]::IsNullOrWhiteSpace($Tag)) {
+    WithGhToken $ReadToken {
+      Gh @("release","download",$Tag,"-R","$Owner/$Repo","-p",$ZipName,"-p",$ShaName,"-D",$dlDir)
+    }
+
+    $zipPath = Join-Path $dlDir $ZipName
+    $shaPath = Join-Path $dlDir $ShaName
+    if (-not (Test-Path -LiteralPath $zipPath)) { throw "Missing asset $ZipName in $Owner/$Repo@$Tag" }
+    if (-not (Test-Path -LiteralPath $shaPath)) { throw "Missing asset $ShaName in $Owner/$Repo@$Tag" }
+    return @{ zip = $zipPath; sha = $shaPath; dir = $dlDir; tag = $Tag }
   }
 
+  # Fallback: repository has no releases yet — use branch zipball to bootstrap
   $zipPath = Join-Path $dlDir $ZipName
   $shaPath = Join-Path $dlDir $ShaName
-  if (-not (Test-Path -LiteralPath $zipPath)) { throw "Missing asset $ZipName in $Owner/$Repo@$Tag" }
-  if (-not (Test-Path -LiteralPath $shaPath)) { throw "Missing asset $ShaName in $Owner/$Repo@$Tag" }
-  return @{ zip = $zipPath; sha = $shaPath; dir = $dlDir }
+  $url = "https://codeload.github.com/$Owner/$Repo/zip/refs/heads/$useBranch"
+  Write-Host "No releases found for $Owner/$Repo. Downloading branch archive '$useBranch' from: $url"
+
+  Invoke-WebRequest -Uri $url -OutFile $zipPath -Headers @{ "User-Agent"="automater-pack-sync" } -ErrorAction Stop
+  $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $zipPath).Hash.ToLower()
+  ($hash + "  " + $ZipName) | Set-Content -LiteralPath $shaPath -Encoding ASCII
+
+  return @{ zip = $zipPath; sha = $shaPath; dir = $dlDir; tag = $null; branch = $useBranch }
 }
 
 function VerifySha([string]$ShaPath, [string]$ZipPath) {
@@ -221,6 +254,9 @@ $writeToken = [string]$env:GITHUB_TOKEN
 if ([string]::IsNullOrWhiteSpace($writeToken)) { throw "Missing GITHUB_TOKEN." }
 
 $readToken = [string]$env:AUTOMATE_SOURCE_TOKEN
+$srcBranch = Get-OptionalProp $src "branch"
+if (-not $srcBranch) { $srcBranch = $baseBranch }
+
 if ([string]::IsNullOrWhiteSpace($readToken)) { $readToken = [string]$env:AUTOMATER_SOURCE_TOKEN }
 if ([string]::IsNullOrWhiteSpace($readToken)) { $readToken = $writeToken }
 
@@ -287,6 +323,8 @@ foreach ($pack in $packs) {
   if (-not [string]::IsNullOrWhiteSpace($triggerTag) -and ([string]::IsNullOrWhiteSpace($triggerPack) -or $triggerPack -eq $id)) {
     $tag = $triggerTag
   } else {
+
+
     $tag = GetLatestTag $owner $repo $readToken
   }
 
@@ -297,7 +335,7 @@ foreach ($pack in $packs) {
     continue
   }
 
-  $dl = DownloadAssets $owner $repo $tag $zipName $shaName $readToken
+  $dl = DownloadAssets $owner $repo $tag $zipName $shaName $readToken $srcBranch
   $sha = VerifySha $dl.sha $dl.zip
 
   $extractRoot = Join-Path $dl.dir "extract"
