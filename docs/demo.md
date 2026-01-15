@@ -4,7 +4,7 @@ Goal: prove signature verification + task allowlist without GitHub token.
 
 1) Set worker vars:
 - AUTOMATER_DEV_MODE="1"
-- GH_TOKEN is NOT set
+- GITHUB_TOKEN is NOT set
 
 2) Set secret:
 - AUTOMATER_TRIGGER_SECRET_K1 set in worker secrets

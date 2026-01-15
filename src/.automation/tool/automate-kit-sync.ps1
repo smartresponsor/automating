@@ -52,8 +52,8 @@ function Gh([string[]]$Args) {
 }
 
 function WithGhToken([string]$Token, [scriptblock]$Block) {
-  $prev = $env:GH_TOKEN
-  try { $env:GH_TOKEN = $Token; & $Block } finally { $env:GH_TOKEN = $prev }
+  $prev = $env:GITHUB_TOKEN
+  try { $env:GITHUB_TOKEN = $Token; & $Block } finally { $env:GITHUB_TOKEN = $prev }
 }
 
 function TryParseDuration([string]$s) {

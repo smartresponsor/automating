@@ -52,7 +52,7 @@ export default {
         const ghRepo = envStr(env, 'GH_REPO', '');
         const ghWorkflow = envStr(env, 'GH_WORKFLOW', '');
         const ghRef = envStr(env, 'GH_REF', 'master');
-        const ghToken = envStr(env, 'GH_TOKEN', '');
+        const ghToken = envStr(env, 'GITHUB_TOKEN', '');
 
         if (!ghOwner || !ghRepo || !ghWorkflow || !ghToken) {
             return json({ok: false, code: 'MissingGhConfig'}, 500);
