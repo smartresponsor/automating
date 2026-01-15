@@ -1,11 +1,11 @@
 consumer model (multi-pack)
 
 what it does
-- this repository runs a single consumer engine from .automating/tool/automate-pack-sync.ps1
-- the engine reads .automating/packs.json and applies one or more packs
+- this repository runs a single consumer engine from .automation/tool/automate-pack-sync.ps1
+- the engine reads .automation/packs.json and applies one or more packs
 - each pack is downloaded from a source GitHub Release as an asset zip + sha256 file
-- apply mode is copy-overwrite into targetRoot with backups in .automating/backup/<packId>/<tag>/...
-- lock is stored in .automating/lock/<packId>.json
+- apply mode is copy-overwrite into targetRoot with backups in .automation/backup/<packId>/<tag>/...
+- lock is stored in .automation/lock/<packId>.json
 - commits are pushed directly to the base branch (default master)
 
 required secrets

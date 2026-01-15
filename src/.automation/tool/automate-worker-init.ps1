@@ -3,7 +3,7 @@
 [CmdletBinding()]
 param(
     [string]$RepoRoot = ".",
-    [string]$WorkerRelPath = ".automating/automator/agent-trigger/worker",
+    [string]$WorkerRelPath = ".automation/automator/agent-trigger/worker",
     [string]$DefaultWorkflowFile = "automate-dispatch.yml"
 )
 

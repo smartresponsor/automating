@@ -7,7 +7,7 @@ Manual:
 - ./Domain/tool/automate-kit-sync.ps1 -SourceOwner <owner> -SourceRepo <repo> -ReleaseTag latest -AssetName automate-kit.zip
 
 Apply targets:
-- .automating/**
+- .automation/**
 - .github/workflows/automate-*.yml
 - .github/prompts/automate-*.md
 - Domain/tool/automate-*.ps1 (bootstrap wrappers)

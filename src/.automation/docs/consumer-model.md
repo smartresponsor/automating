@@ -36,7 +36,7 @@ C) Enable on client repo
 D) Source allowlist
 
 Source repo stores allowlist in:
-- .automating/client/allowlist.json
+- .automation/client/allowlist.json
 
 It can also discover opt-in clients by topic:
 - automate-client

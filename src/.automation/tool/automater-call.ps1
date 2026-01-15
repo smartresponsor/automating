@@ -1,12 +1,12 @@
 # Copyright (c) 2025 Oleksandr Tishchenko / Marketing America Corp
 
-    [CmdletBinding()]
+[CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
     [string]$Url,
 
     [Parameter(Mandatory = $true)]
-    [ValidateSet("scan", "health", "doctor", "validate", "plan", "codex", "pr")]
+    [ValidateSet("scan","health","doctor","validate","plan","codex","pr")]
     [string]$Task,
 
     [string]$Ref = "master",
@@ -23,81 +23,61 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-function ConvertTo-HexString
-{
+function ConvertTo-HexString {
     param([Parameter(Mandatory = $true)][byte[]]$Bytes)
     ($Bytes | ForEach-Object { $_.ToString("x2") }) -join ""
 }
 
-function Get-Sha256Hex
-{
+function Get-Sha256Hex {
     param([Parameter(Mandatory = $true)][string]$Value)
     $sha = [System.Security.Cryptography.SHA256]::Create()
-    try
-    {
+    try {
         ConvertTo-HexString ($sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($Value)))
-    }
-    finally
-    {
+    } finally {
         $sha.Dispose()
     }
 }
 
-function Get-HmacSha256Hex
-{
+function Get-HmacSha256Hex {
     param(
         [Parameter(Mandatory = $true)][string]$Secret,
         [Parameter(Mandatory = $true)][string]$Value
     )
     $hmac = [System.Security.Cryptography.HMACSHA256]::new(
-            [System.Text.Encoding]::UTF8.GetBytes($Secret)
+        [System.Text.Encoding]::UTF8.GetBytes($Secret)
     )
-    try
-    {
+    try {
         ConvertTo-HexString ($hmac.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($Value)))
-    }
-    finally
-    {
+    } finally {
         $hmac.Dispose()
     }
 }
 
-function Get-AgentSecret
-{
+function Get-AgentSecret {
     param([Parameter(Mandatory = $true)][string]$KidUpper)
 
     $byKid = "AUTOMATER_TRIGGER_SECRET_$KidUpper"
     $v = (Get-Item "Env:$byKid" -ErrorAction SilentlyContinue).Value
-    if ($v)
-    {
-        return @{ Secret = $v; Source = $byKid }
-    }
+    if ($v) { return @{ Secret = $v; Source = $byKid } }
 
     $legacy = (Get-Item "Env:AUTOMATER_TRIGGER_SECRET" -ErrorAction SilentlyContinue).Value
-    if ($legacy)
-    {
-        return @{ Secret = $legacy; Source = "AUTOMATER_TRIGGER_SECRET" }
-    }
+    if ($legacy) { return @{ Secret = $legacy; Source = "AUTOMATER_TRIGGER_SECRET" } }
 
     throw "Missing env var $byKid (or AUTOMATER_TRIGGER_SECRET)"
 }
 
-function ConvertTo-CanonicalJson
-{
+function ConvertTo-CanonicalJson {
     param([Parameter(Mandatory = $true)]$Value)
 
-    if ($Value -is [System.Collections.IDictionary])
-    {
-        $ordered = [ordered]@{ }
-        foreach ($k in ($Value.Keys | Sort-Object))
-        {
+    if ($Value -is [System.Collections.IDictionary]) {
+        $ordered = [ordered]@{}
+        foreach ($k in ($Value.Keys | Sort-Object)) {
             $ordered[$k] = ConvertTo-CanonicalJson $Value[$k]
         }
         return $ordered
     }
 
-    if ($Value -is [array])
-    {
+    if ($Value -is [array]) {
         return @($Value | ForEach-Object { ConvertTo-CanonicalJson $_ })
     }
 
@@ -112,12 +92,12 @@ $secret = $secret.Trim()
 $timestamp = [int][DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
 
 $bodyObj = @{
-    task = $Task
-    ref = $Ref
+    task   = $Task
+    ref    = $Ref
     inputs = @{
-        kind = $Kind
+        kind    = $Kind
         message = $Message
-        note = $Note
+        note    = $Note
     }
 }
 
@@ -134,10 +114,10 @@ $signed = "$timestamp.$bodyHash"
 $signature = (Get-HmacSha256Hex -Secret $secret -Value $signed).ToLowerInvariant()
 
 $headers = @{
-    "Accept" = "application/json"
-    "Content-Type" = "application/json; charset=utf-8"
+    "Accept"         = "application/json"
+    "Content-Type"   = "application/json; charset=utf-8"
     "X-AUTOMATER-Timestamp" = "$timestamp"
-    "X-AUTOMATER-Kid" = $kidUpper
+    "X-AUTOMATER-Kid"       = $kidUpper
     "X-AUTOMATER-Signature" = $signature
 }
 
@@ -151,23 +131,16 @@ Write-Verbose ("signature=" + $signature)
 Write-Verbose ("secretSource=" + $secretInfo.Source)
 Write-Verbose ("secretSha256=" + (Get-Sha256Hex -Value $secret))
 
-try
-{
+try {
     Invoke-RestMethod -Method Post -Uri $Url -Headers $headers -ContentType "application/json; charset=utf-8" -Body $body -TimeoutSec $TimeoutSec
-}
-catch
-{
-    if ($_.Exception -and $_.Exception.Response)
-    {
-        try
-        {
+} catch {
+    if ($_.Exception -and $_.Exception.Response) {
+        try {
             $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
             $respBody = $reader.ReadToEnd()
             $reader.Close()
             Write-Error $respBody
-        }
-        catch
-        {
+        } catch {
             throw
         }
     }

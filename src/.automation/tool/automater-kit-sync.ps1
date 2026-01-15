@@ -11,7 +11,7 @@ param(
   [string]$SourceRepo  = $env:AUTOMATER_KIT_REPO,
   [string]$AssetZip    = $(if ($env:AUTOMATER_KIT_ASSET_ZIP) { $env:AUTOMATER_KIT_ASSET_ZIP } else { "automater-kit.zip" }),
   [string]$AssetSha    = $(if ($env:AUTOMATER_KIT_ASSET_SHA) { $env:AUTOMATER_KIT_ASSET_SHA } else { "automater-kit.sha256" }),
-  [string]$LockPath    = $(if ($env:AUTOMATER_KIT_LOCK_PATH) { $env:AUTOMATER_KIT_LOCK_PATH } else { ".automatingr/automater-kit.lock.json" }),
+  [string]$LockPath    = $(if ($env:AUTOMATER_KIT_LOCK_PATH) { $env:AUTOMATER_KIT_LOCK_PATH } else { ".automation/automater-kit.lock.json" }),
   [string]$BranchPrefix = $(if ($env:AUTOMATER_KIT_BRANCH_PREFIX) { $env:AUTOMATER_KIT_BRANCH_PREFIX } else { "automater-kit" }),
   [string]$BaseBranch  = $(if ($env:AUTOMATER_BASE_BRANCH) { $env:AUTOMATER_BASE_BRANCH } else { "master" }),
   [switch]$NoPr,
@@ -57,12 +57,12 @@ function Gh([string[]]$Args) {
 }
 
 function WithGhToken([string]$Token, [scriptblock]$Block) {
-  $prev = $env:GITHUB_TOKEN
+  $prev = $env:GH_TOKEN
   try {
-    $env:GITHUB_TOKEN = $Token
+    $env:GH_TOKEN = $Token
     & $Block
   } finally {
-    $env:GITHUB_TOKEN = $prev
+    $env:GH_TOKEN = $prev
   }
 }
 
@@ -129,7 +129,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $payloadRoot = Join-Path $extractDir "automater-kit"
 if (-not (Test-Path -LiteralPath $payloadRoot)) { throw "Invalid kit zip: missing top-level folder 'automater-kit'." }
 
-$backupRoot = Join-Path ".automatingr/backup" $tag
+$backupRoot = Join-Path ".automation/backup" $tag
 EnsureDir $backupRoot
 
 $files = Get-ChildItem -LiteralPath $payloadRoot -Recurse -File

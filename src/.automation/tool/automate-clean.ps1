@@ -26,9 +26,9 @@ $targets = @(
   "Domain\Tool\automate-kit-sync.ps1"
 )
 
-Write-Host "automate-clean: planned removals (only if .automating exists)"
-if (-not (Test-Path (P ".automating"))) {
-  throw ".automating folder not found at Root=$Root. Refusing to clean."
+Write-Host "automate-clean: planned removals (only if .automation exists)"
+if (-not (Test-Path (P ".automation"))) {
+  throw ".automation folder not found at Root=$Root. Refusing to clean."
 }
 
 foreach ($rel in $targets) {

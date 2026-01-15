@@ -10,7 +10,7 @@ param(
   [string]$ForceTag    = $env:AUTOMATE_FORCE_TAG,
   [string]$AssetZip    = "automate-kit.zip",
   [string]$AssetSha    = "automate-kit.sha256",
-  [string]$LockPath    = ".automating/lock/kit.json"
+  [string]$LockPath    = ".automation/lock/kit.json"
 )
 
 Set-StrictMode -Version Latest
@@ -52,8 +52,8 @@ function Gh([string[]]$Args) {
 }
 
 function WithGhToken([string]$Token, [scriptblock]$Block) {
-  $prev = $env:GITHUB_TOKEN
-  try { $env:GITHUB_TOKEN = $Token; & $Block } finally { $env:GITHUB_TOKEN = $prev }
+  $prev = $env:GH_TOKEN
+  try { $env:GH_TOKEN = $Token; & $Block } finally { $env:GH_TOKEN = $prev }
 }
 
 function TryParseDuration([string]$s) {
@@ -120,11 +120,11 @@ if ($expected -ne $actual) { throw "SHA256 mismatch. expected=$expected actual=$
 
 Write-Host "Downloaded $AssetZip sha256=$actual tag=$tag"
 
-# Backup current .automating (if exists)
-$backupRoot = Join-Path ".automating/backup" $tag
-if (Test-Path -LiteralPath ".automating") {
+# Backup current .automation (if exists)
+$backupRoot = Join-Path ".automation/backup" $tag
+if (Test-Path -LiteralPath ".automation") {
   EnsureDir $backupRoot
-  Copy-Item -Recurse -Force -LiteralPath ".automating" -Destination $backupRoot
+  Copy-Item -Recurse -Force -LiteralPath ".automation" -Destination $backupRoot
 }
 
 # Extract
@@ -133,11 +133,11 @@ EnsureDir $extractDir
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $extractDir)
 
-$payload = Join-Path $extractDir ".automating"
-if (-not (Test-Path -LiteralPath $payload)) { throw "Invalid kit zip: missing .automating folder at root." }
+$payload = Join-Path $extractDir ".automation"
+if (-not (Test-Path -LiteralPath $payload)) { throw "Invalid kit zip: missing .automation folder at root." }
 
 # Apply (overwrite)
-Copy-Item -Recurse -Force -LiteralPath $payload -Destination ".automating"
+Copy-Item -Recurse -Force -LiteralPath $payload -Destination ".automation"
 
 $lockObj = [pscustomobject]@{
   source = "$SourceOwner/$SourceRepo"

@@ -12,7 +12,7 @@ Opt-in knobs (repo variables):
 - AUTOMATER_KIT_REPO: source repo (e.g. Automating)
 - AUTOMATER_BASE_BRANCH: base branch in this repo (default: master)
 - AUTOMATER_KIT_BRANCH_PREFIX: default: automater-kit
-- AUTOMATER_KIT_LOCK_PATH: default: .automatingr/automater-kit.lock.json
+- AUTOMATER_KIT_LOCK_PATH: default: .automation/automater-kit.lock.json
 
 Secrets:
 - AUTOMATER_SOURCE_TOKEN (optional): if source repo is private or rate-limited.
