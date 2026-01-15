@@ -71,7 +71,7 @@ test("dispatch with valid signature verifies in dev mode", async () => {
   process.env.AUTOMATER_DEV_MODE = "1";
   process.env.AUTOMATER_DEBUG = "0";
   process.env.AUTOMATER_TIME_SKEW_SEC = "300";
-  delete process.env.GITHUB_TOKEN;
+  delete process.env.GH_TOKEN;
 
   const body = JSON.stringify({ task: "health", ref: "master", inputs: { kind: "fix" } });
   const ts = Math.floor(Date.now() / 1000).toString();

@@ -14,7 +14,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 function EnsureDir([string]$Path) {
-  if (-not (Test-Path -LiteralPath $Path)) { New-Item -ItemType Directory -Path $Path | Out-Null }
+  if (-not (Test-Path -LiteralPath $Path)) { New-Item -ItemType Directory -Path $Path -Force | Out-Null }
 }
 
 function ReadJson([string]$Path) {
@@ -45,12 +45,12 @@ function Gh([string[]]$Args) {
 }
 
 function WithGhToken([string]$Token, [scriptblock]$Block) {
-  $prev = $env:GITHUB_TOKEN
+  $prev = $env:GH_TOKEN
   try {
-    $env:GITHUB_TOKEN = $Token
+    $env:GH_TOKEN = $Token
     & $Block
   } finally {
-    $env:GITHUB_TOKEN = $prev
+    $env:GH_TOKEN = $prev
   }
 }
 

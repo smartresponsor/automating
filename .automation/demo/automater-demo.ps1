@@ -1,13 +1,13 @@
 # Copyright (c) 2025 Oleksandr Tishchenko / Marketing America Corp
 # Demo: health + signed dispatch
 
-    [CmdletBinding()]
+[CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)]
-    [string]$BaseUrl,
+  [Parameter(Mandatory = $true)]
+  [string]$BaseUrl,
 
-    [ValidatePattern("^K\d+$")]
-    [string]$Kid = "K1"
+  [ValidatePattern("^K\d+$")]
+  [string]$Kid = "K1"
 )
 
 Set-StrictMode -Version Latest
