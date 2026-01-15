@@ -7,67 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="fix:">
-      <change afterPath="$PROJECT_DIR$/src/.automation/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/README-automation-kit.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/ai/agent-trigger/worker/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/ai/agent-trigger/worker/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/ai/agent-trigger/worker/wrangler.toml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/automator/agent-trigger/worker/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/automator/agent-trigger/worker/wrangler.toml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/client/allowlist.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/demo/automater-demo.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/docs/component-scope.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/docs/demo.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/docs/security.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/packs.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/payload/.github/prompts/automate-repo-portrait-rwe.prompt.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/payload/.github/workflows/automate-dispatch.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/payload/.github/workflows/automate-kit-release.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/payload/.github/workflows/automate-kit-sync.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/payload/.github/workflows/automate-pack-sync.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/payload/.github/workflows/sr-agent-dispatch.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/template/gitignore/ai-agent-trigger.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/automate-call.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/automate-secret-set.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/automate-task.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/automater-secret-set.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/automater-task.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/automater-worker-init.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/t.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/template/gitignore/ai-agent-trigger.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.automation/tool/template/prompt/automater-repo-portrait-rwe.prompt.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/prompts/automate-repo-portrait-rwe.prompt.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/prompts/automater-repo-portrait-rwe.prompt.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/prompts/prompt-audit.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/agent-dispatch.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/automate-dispatch.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/automate-kit-release.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/automate-kit-sync.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/automate-pack-sync.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/automater-ci.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/automater-dispatch.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/automater-kit-sync.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/.github/workflows/sr-agent-dispatch.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.automation/tool/automater-pack-sync.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/.automation/tool/automater-pack-sync.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/ai/agent-trigger/worker/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/ai/agent-trigger/worker/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/docs/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/docs/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/docs/automater/consumer.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/docs/automater/consumer.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/docs/consumer-model.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/docs/consumer-model.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/docs/consumer-multipack.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/docs/consumer-multipack.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/docs/consumer.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/docs/consumer.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/docs/patch-v0_5-note.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/docs/patch-v0_5-note.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/docs/usage.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/docs/usage.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automate-clean.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automate-clean.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automate-consolidate.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automate-consolidate.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automate-kit-sync.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automate-kit-sync.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automate-pack-sync.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automate-pack-sync.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automate-worker-init.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automate-worker-init.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automater-kit-sync.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automater-kit-sync.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.automation/tool/automater-pack-sync.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/.automation/tool/automater-pack-sync.ps1" afterDir="false" />
-    </list>
+    <list default="true" id="ce45bc4a-d1cb-4887-923d-c73b10452862" name="Changes" comment="restore: src" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -120,7 +60,7 @@
       <option name="presentableId" value="Default" />
       <updated>1768173743048</updated>
       <workItem from="1768173744114" duration="40628000" />
-      <workItem from="1768449363731" duration="1621000" />
+      <workItem from="1768449363731" duration="2266000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <option name="closed" value="true" />
@@ -498,7 +438,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768449866556</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="restore: src">
+      <option name="closed" value="true" />
+      <created>1768460239188</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1768460239188</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -531,6 +479,7 @@
     <MESSAGE value="fix: token" />
     <MESSAGE value="fix: git command" />
     <MESSAGE value="fix:" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix:" />
+    <MESSAGE value="restore: src" />
+    <option name="LAST_COMMIT_MESSAGE" value="restore: src" />
   </component>
 </project>
