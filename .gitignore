@@ -260,3 +260,5 @@ phpcs.xml
 # *.iml
 # *.ipr
 
+.automation/.tmp/
+.automation/.cache/

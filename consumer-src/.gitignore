@@ -1,0 +1,18 @@
+# Automater runtime work directories
+.automation/.tmp/
+.automation/.cache/
+.automation/.log/
+.automation/.download/
+
+# IDE / editor
+.idea/
+**/.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Consumer runtime
+.automation/lock/
