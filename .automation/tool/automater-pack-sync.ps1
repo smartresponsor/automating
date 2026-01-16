@@ -78,8 +78,22 @@ function Git {
 }
 
 function Gh([string[]]$Args) {
+  if ($null -eq $Args) { $Args = @() }
+  # Defensive: allow calling `Gh` with a REST endpoint directly (e.g. `repos/<o>/<r>/releases/latest`).
+  # In that case, transparently prepend `api` so the call becomes `gh api ...`.
+  if ($Args.Count -gt 0) {
+    $a0 = [string]$Args[0]
+    if ($a0 -match '^(repos|orgs|users|graphql)/') {
+      $Args = @('api') + $Args
+    }
+  }
   $p = Start-Process -FilePath gh -ArgumentList $Args -NoNewWindow -Wait -PassThru
   if ($p.ExitCode -ne 0) { throw "gh failed: $($Args -join ' ')" }
+}
+
+function GhApi([string[]]$Args) {
+  if ($null -eq $Args) { $Args = @() }
+  Gh (@('api') + $Args)
 }
 
 function WithGhToken([string]$Token, [scriptblock]$Block) {
@@ -177,6 +191,24 @@ function GetLatestTag([string]$Owner, [string]$Repo, [string]$ReadToken) {
 
   if ([string]::IsNullOrWhiteSpace($tag)) { return $null }
   return $tag.Trim()
+}
+
+
+function GetBranchHeadSha([string]$Owner, [string]$Repo, [string]$Branch, [string]$ReadToken) {
+  $b = if ([string]::IsNullOrWhiteSpace($Branch)) { "master" } else { $Branch }
+  $uri = "https://api.github.com/repos/$Owner/$Repo/commits/$b"
+  $hdr = @{
+    "User-Agent" = "automater-pack-sync"
+    "Accept" = "application/vnd.github+json"
+  }
+  if (-not [string]::IsNullOrWhiteSpace($ReadToken)) { $hdr["Authorization"] = "Bearer $ReadToken" }
+  try {
+    $r = Invoke-RestMethod -Uri $uri -Headers $hdr -Method Get -ErrorAction Stop
+    if ($null -eq $r) { return "" }
+    return [string]$r.sha
+  } catch {
+    return ""
+  }
 }
 
 function DownloadAssets([string]$Owner, [string]$Repo, [string]$Tag, [string]$ZipName, [string]$ShaName, [string]$ReadToken, [string]$Branch) {
@@ -333,6 +365,15 @@ foreach ($pack in $packs) {
 
 
     $tag = GetLatestTag $owner $repo $readToken
+    if ([string]::IsNullOrWhiteSpace($tag)) {
+      $headSha = GetBranchHeadSha $owner $repo $srcBranch $readToken
+      if (-not [string]::IsNullOrWhiteSpace($headSha)) {
+        $short = if ($headSha.Length -ge 8) { $headSha.Substring(0,8) } else { $headSha }
+        $tag = "branch-$srcBranch-$short"
+      } else {
+        $tag = "branch-$srcBranch"
+      }
+    }
   }
 
   $lockPath = Join-Path $LockDir "$id.json"
@@ -352,6 +393,16 @@ foreach ($pack in $packs) {
   if (-not [string]::IsNullOrWhiteSpace($topFolder)) {
     $candidate = Join-Path $extractRoot $topFolder
     if (Test-Path -LiteralPath $candidate) { $payloadRoot = $candidate }
+  }
+
+  # Auto-detect GitHub zipball top folder when not configured.
+  if ($payloadRoot -eq $extractRoot) {
+    $entries = @((Get-ChildItem -LiteralPath $extractRoot -Force -ErrorAction SilentlyContinue))
+    $dirs = @($entries | Where-Object { $_.PSIsContainer })
+    $files = @($entries | Where-Object { -not $_.PSIsContainer })
+    if ($dirs.Count -eq 1 -and $files.Count -eq 0) {
+      $payloadRoot = $dirs[0].FullName
+    }
   }
 
   if (-not (Test-Path -LiteralPath $payloadRoot)) { throw "Invalid payload root for $id at $payloadRoot" }
