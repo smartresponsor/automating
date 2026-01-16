@@ -78,8 +78,22 @@ function Git {
 }
 
 function Gh([string[]]$Args) {
+  if ($null -eq $Args) { $Args = @() }
+  # Defensive: allow calling `Gh` with a REST endpoint directly (e.g. `repos/<o>/<r>/releases/latest`).
+  # In that case, transparently prepend `api` so the call becomes `gh api ...`.
+  if ($Args.Count -gt 0) {
+    $a0 = [string]$Args[0]
+    if ($a0 -match '^(repos|orgs|users|graphql)/') {
+      $Args = @('api') + $Args
+    }
+  }
   $p = Start-Process -FilePath gh -ArgumentList $Args -NoNewWindow -Wait -PassThru
   if ($p.ExitCode -ne 0) { throw "gh failed: $($Args -join ' ')" }
+}
+
+function GhApi([string[]]$Args) {
+  if ($null -eq $Args) { $Args = @() }
+  Gh (@('api') + $Args)
 }
 
 function WithGhToken([string]$Token, [scriptblock]$Block) {
@@ -158,25 +172,42 @@ function GetLatestTag([string]$Owner, [string]$Repo, [string]$ReadToken) {
   EnsureDir $WorkDir
 
   $tag = $null
+
+  # Best-effort: if gh is not authenticated (401) or release is absent (404),
+  # we silently fall back to branch archive download.
   try {
     WithGhToken $ReadToken {
       $out = & gh api "repos/$Owner/$Repo/releases/latest" --jq ".tag_name" 2>&1
-      $ec = $LASTEXITCODE
-      if ($ec -ne 0) {
-        if ($out -match "404" -or $out -match "Not Found") { $tag = $null }
-        else { throw "gh failed: $out" }
-      } else {
+      if ($LASTEXITCODE -eq 0) {
         $tag = [string]$out
       }
     }
   } catch {
-    $msg = $_.Exception.Message
-    if ($msg -match "404" -or $msg -match "Not Found") { return $null }
-    throw
+    $tag = $null
   }
 
-  if ([string]::IsNullOrWhiteSpace($tag)) { return $null }
+  if ([string]::IsNullOrWhiteSpace($tag)) {
+    return $null
+  }
+
   return $tag.Trim()
+}
+
+function GetBranchHeadSha([string]$Owner, [string]$Repo, [string]$Branch, [string]$ReadToken) {
+  $b = if ([string]::IsNullOrWhiteSpace($Branch)) { "master" } else { $Branch }
+  $uri = "https://api.github.com/repos/$Owner/$Repo/commits/$b"
+  $hdr = @{
+    "User-Agent" = "automater-pack-sync"
+    "Accept" = "application/vnd.github+json"
+  }
+  if (-not [string]::IsNullOrWhiteSpace($ReadToken)) { $hdr["Authorization"] = "Bearer $ReadToken" }
+  try {
+    $r = Invoke-RestMethod -Uri $uri -Headers $hdr -Method Get -ErrorAction Stop
+    if ($null -eq $r) { return "" }
+    return [string]$r.sha
+  } catch {
+    return ""
+  }
 }
 
 function DownloadAssets([string]$Owner, [string]$Repo, [string]$Tag, [string]$ZipName, [string]$ShaName, [string]$ReadToken, [string]$Branch) {
@@ -188,21 +219,31 @@ function DownloadAssets([string]$Owner, [string]$Repo, [string]$Tag, [string]$Zi
   $dlDir = Join-Path $WorkDir ("dl-" + $Owner + "-" + $Repo + "-" + $dlKey)
   if (Test-Path -LiteralPath $dlDir) { Remove-Item -Recurse -Force -LiteralPath $dlDir }
   New-Item -ItemType Directory -Path $dlDir | Out-Null
-
   # Preferred path: download release assets
   if (-not [string]::IsNullOrWhiteSpace($Tag)) {
-    WithGhToken $ReadToken {
-      Gh @("release","download",$Tag,"-R","$Owner/$Repo","-p",$ZipName,"-p",$ShaName,"-D",$dlDir)
-    }
-
     $zipPath = Join-Path $dlDir $ZipName
     $shaPath = Join-Path $dlDir $ShaName
-    if (-not (Test-Path -LiteralPath $zipPath)) { throw "Missing asset $ZipName in $Owner/$Repo@$Tag" }
-    if (-not (Test-Path -LiteralPath $shaPath)) { throw "Missing asset $ShaName in $Owner/$Repo@$Tag" }
-    return @{ zip = $zipPath; sha = $shaPath; dir = $dlDir; tag = $Tag }
+
+    $ok = $false
+    try {
+      WithGhToken $ReadToken {
+        Gh @("release","download",$Tag,"-R","$Owner/$Repo","-p",$ZipName,"-p",$ShaName,"-D",$dlDir)
+      }
+      if ((Test-Path -LiteralPath $zipPath) -and (Test-Path -LiteralPath $shaPath)) { $ok = $true }
+    } catch {
+      $ok = $false
+    }
+
+    if ($ok) {
+      return @{ zip = $zipPath; sha = $shaPath; dir = $dlDir; tag = $Tag }
+    }
+
+    Write-Host "Release asset download failed or not available for $Owner/$Repo@$Tag. Falling back to branch archive '$useBranch'."
+    # fall through into branch zipball path
   }
 
   # Fallback: repository has no releases yet — use branch zipball to bootstrap
+
   $zipPath = Join-Path $dlDir $ZipName
   $shaPath = Join-Path $dlDir $ShaName
   $url = "https://codeload.github.com/$Owner/$Repo/zip/refs/heads/$useBranch"
@@ -325,16 +366,27 @@ foreach ($pack in $packs) {
   if (-not [string]::IsNullOrWhiteSpace($triggerTag) -and (-not [string]::IsNullOrWhiteSpace($triggerPack)) -and $triggerPack -ne $id) {
     continue
   }
-
   $tag = $null
+  $downloadTag = $null
   if (-not [string]::IsNullOrWhiteSpace($triggerTag) -and ([string]::IsNullOrWhiteSpace($triggerPack) -or $triggerPack -eq $id)) {
     $tag = $triggerTag
+    $downloadTag = $triggerTag
   } else {
-
-
-    $tag = GetLatestTag $owner $repo $readToken
+    $latestTag = GetLatestTag $owner $repo $readToken
+    if (-not [string]::IsNullOrWhiteSpace($latestTag)) {
+      $tag = $latestTag
+      $downloadTag = $latestTag
+    } else {
+      $headSha = GetBranchHeadSha $owner $repo $srcBranch $readToken
+      if (-not [string]::IsNullOrWhiteSpace($headSha)) {
+        $short = if ($headSha.Length -ge 8) { $headSha.Substring(0,8) } else { $headSha }
+        $tag = "branch-$srcBranch-$short"
+      } else {
+        $tag = "branch-$srcBranch"
+      }
+      $downloadTag = $null
+    }
   }
-
   $lockPath = Join-Path $LockDir "$id.json"
   $lock = ReadJson $lockPath
   if ($lock -and ([string]$lock.tag -eq [string]$tag)) {
@@ -342,7 +394,7 @@ foreach ($pack in $packs) {
     continue
   }
 
-  $dl = DownloadAssets $owner $repo $tag $zipName $shaName $readToken $srcBranch
+  $dl = DownloadAssets $owner $repo $downloadTag $zipName $shaName $readToken $srcBranch
   $sha = VerifySha $dl.sha $dl.zip
 
   $extractRoot = Join-Path $dl.dir "extract"
@@ -352,6 +404,16 @@ foreach ($pack in $packs) {
   if (-not [string]::IsNullOrWhiteSpace($topFolder)) {
     $candidate = Join-Path $extractRoot $topFolder
     if (Test-Path -LiteralPath $candidate) { $payloadRoot = $candidate }
+  }
+
+  # Auto-detect GitHub zipball top folder when not configured.
+  if ($payloadRoot -eq $extractRoot) {
+    $entries = @((Get-ChildItem -LiteralPath $extractRoot -Force -ErrorAction SilentlyContinue))
+    $dirs = @($entries | Where-Object { $_.PSIsContainer })
+    $files = @($entries | Where-Object { -not $_.PSIsContainer })
+    if ($dirs.Count -eq 1 -and $files.Count -eq 0) {
+      $payloadRoot = $dirs[0].FullName
+    }
   }
 
   if (-not (Test-Path -LiteralPath $payloadRoot)) { throw "Invalid payload root for $id at $payloadRoot" }
