@@ -18,10 +18,6 @@ jobs:
         run: echo "AUTOMATER_SCRIPT=${{ github.workspace }}/.automation/tool/automater-pack-sync.ps1" >> $GITHUB_ENV
 
       - name: Automater pack sync
-        shell: pwsh
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          if (!(Test-Path -LiteralPath $env:AUTOMATER_SCRIPT)) { throw "not found: $env:AUTOMATER_SCRIPT" }
-          & $env:AUTOMATER_SCRIPT -OnlyId "automate-kit"
-      
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pwsh -NoProfile -File "$env:AUTOMATER_SCRIPT" -OnlyId "automate-kit"

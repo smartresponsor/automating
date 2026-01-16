@@ -1,0 +1,13 @@
+name = "automate-agent-trigger"
+main = "src/index.js"
+compatibility_date = "2025-10-01"
+
+[vars]
+AUTOMATE_TS_SKEW_SEC = "300"
+AUTOMATE_ALLOWED_TASK = "health"
+AUTOMATE_DEBUG = "0"
+AUTOMATE_DEV_MODE = "0"
+GH_OWNER = ""
+GH_REPO = ""
+GH_WORKFLOW = ""
+GH_REF = "master"
