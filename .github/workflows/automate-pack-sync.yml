@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 * * * *'
-
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -40,4 +42,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.AUTOMATE_SOURCE_TOKEN }}
         run: |
-          pwsh -NoProfile -File "$env:AUTOMATER_SCRIPT" -OnlyId "automate-kit"
+          & $env:AUTOMATER_SCRIPT -OnlyId "automate-kit"
